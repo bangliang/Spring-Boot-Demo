@@ -1,0 +1,9 @@
+# dev环境
+server:
+  servlet:
+    context-path: /bjw
+  port: 521
+
+demo:
+  age: 22
+  name: zy

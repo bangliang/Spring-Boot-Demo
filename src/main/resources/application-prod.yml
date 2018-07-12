@@ -1,0 +1,9 @@
+# 生产环境
+server:
+  servlet:
+    context-path: /bjw
+  port: 520
+
+demo:
+  age: 22
+  name: zy
