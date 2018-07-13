@@ -1,6 +1,5 @@
-package com.exmapl;
+package com.exmaple.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 // 处理请求也可以用@Controller+@ResponseBody

@@ -1,13 +1,25 @@
-package com.exmapl;
+package com.exmaple.controller;
 
+import com.exmaple.domain.Demo;
+import com.exmaple.domain.Result;
+import com.exmaple.repository.DemoRepository;
+import com.exmaple.service.DemoService;
+import com.exmaple.utils.ResultUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.List;
 
 // 控制器
 @RestController
 public class DemoController {
+
+    private final static Logger logger = LoggerFactory.getLogger(DemoController.class);
 
     @Autowired
     private DemoRepository demoRepository;
@@ -21,6 +33,7 @@ public class DemoController {
      */
     @GetMapping("/demo/all")
     public List<Demo> demoList(){
+        logger.info("demoList");
         return demoRepository.findAll();
     }
 
@@ -31,13 +44,35 @@ public class DemoController {
      * @return
      */
     @PostMapping("/demo/add")
-    public Demo demoAdd(@RequestParam("name") String name,
-                        @RequestParam("age") Integer age){
-        Demo demo = new Demo();
-        demo.setAge(age);
-        demo.setName(name);
+    // 通过@Valid对对象进行验证
+    public Result<Demo> demoAdd(@Valid Demo demo, BindingResult bindingResult){
 
-        return demoRepository.save(demo);
+        if(bindingResult.hasErrors()){
+//            Result result = new Result();
+//            result.setCode(0);
+//            result.setMsg(bindingResult.getFieldError().getDefaultMessage());
+//            result.setData(null);
+//            return result;
+
+//            System.out.println(bindingResult.getFieldError().getDefaultMessage());
+
+            return ResultUtil.error(0, bindingResult.getFieldError().getDefaultMessage());
+
+        }
+
+        demo.setAge(demo.getAge());
+        demo.setName(demo.getName());
+        demo.setSexy(demo.getSexy());
+
+//        Result result = new Result();
+//        result.setCode(1);
+//        result.setMsg("成功！");
+//        result.setData(demoRepository.save(demo));
+//        return result;
+
+//        return demoRepository.save(demo);
+
+        return ResultUtil.success(demoRepository.save(demo));
     }
 
     /**
@@ -49,11 +84,13 @@ public class DemoController {
     @PutMapping("/demo/update/{id}")
     public Demo demoUpdate(@RequestParam("name") String name,
                            @RequestParam("age") Integer age,
+                           @RequestParam("sexy") String sexy,
                            @PathVariable("id") Integer id){
         Demo demo = new Demo();
         demo.setId(id);
         demo.setAge(age);
         demo.setName(name);
+        demo.setSexy(sexy);
 
         return demoRepository.save(demo);
     }
@@ -107,5 +144,14 @@ public class DemoController {
     @PostMapping("/demo/add/two")
     public void addTwo(){
         demoService.insertTwo();
+    }
+
+    /**
+     * 获取某demo的年龄并判断所在阶段
+     */
+    @GetMapping("/demo/age/{id}")
+    public void getAge(@PathVariable("id") Integer id) throws Exception{
+        demoService.getAge(id);
+        // 捕获异常
     }
 }
